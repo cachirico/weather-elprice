@@ -1,0 +1,43 @@
+resources:
+  jobs:
+    pl_weather_price:
+      name: pl_weather_price
+      tasks:
+        - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/02_bronze_ingestion
+            source: WORKSPACE
+        - task_key: silver_transformations
+          depends_on:
+            - task_key: bronze_ingestion
+          notebook_task:
+            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/03_silver_transformations
+            source: WORKSPACE
+        - task_key: silver_join
+          depends_on:
+            - task_key: silver_transformations
+          notebook_task:
+            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/04_silver_join
+            source: WORKSPACE
+        - task_key: gold_analysis
+          depends_on:
+            - task_key: silver_join
+          notebook_task:
+            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/05_gold_analysis
+            source: WORKSPACE
+        - task_key: validation
+          depends_on:
+            - task_key: gold_analysis
+          notebook_task:
+            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/06_validation
+            source: WORKSPACE
+      queue:
+        enabled: true
+      parameters:
+        - name: date_from
+          default: 2025-01-01
+        - name: date_to
+          default: 2025-01-31
+        - name: run_id
+          default: "{{job.run_id}}"
+      performance_target: PERFORMANCE_OPTIMIZED
