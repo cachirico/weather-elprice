@@ -1,0 +1,419 @@
+{
+  "datasets": [
+    {
+      "name": "e53b8d8e",
+      "displayName": "price_by_temperature_band",
+      "config": {
+        "version": "1.1",
+        "source": "workspace.gold.price_by_temperature_band",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ]
+      }
+    },
+    {
+      "name": "c3f9e9bd",
+      "displayName": "executive_summary",
+      "config": {
+        "version": "1.1",
+        "source": "workspace.gold.executive_summary",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "ac24c0db",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "avg_price_by_temperature_band",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e53b8d8e",
+                  "fields": [
+                    {
+                      "name": "temperature_band",
+                      "expression": "`temperature_band`"
+                    },
+                    {
+                      "name": "observation_count",
+                      "expression": "`observation_count`"
+                    },
+                    {
+                      "name": "average_price_nok_per_kwh",
+                      "expression": "`average_price_nok_per_kwh`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Average Electricity Price by Temperature Band",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "temperature_band",
+                  "displayName": "Temperature Band",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "custom-order",
+                      "orderedValues": [
+                        "-15 to -10 °C",
+                        "-10 to -5 °C",
+                        "-5 to 0 °C",
+                        "0 to 5 °C",
+                        "5 to 10 °C",
+                        "10 to 15 °C",
+                        "15 to 20 °C",
+                        "20 to 25 °C"
+                      ]
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "average_price_nok_per_kwh",
+                  "displayName": "Average Price (NOK/kWh)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "temperature_band",
+                  "legend": {
+                    "hide": true
+                  },
+                  "scale": {
+                    "mappings": [
+                      {
+                        "color": "#0B4F8A",
+                        "value": "-15 to -10 °C"
+                      },
+                      {
+                        "color": "#2E7FB8",
+                        "value": "-10 to -5 °C"
+                      },
+                      {
+                        "color": "#85B8DC",
+                        "value": "-5 to 0 °C"
+                      },
+                      {
+                        "color": "#F2B3B3",
+                        "value": "0 to 5 °C"
+                      },
+                      {
+                        "color": "#E58A8A",
+                        "value": "5 to 10 °C"
+                      },
+                      {
+                        "color": "#D96060",
+                        "value": "10 to 15 °C"
+                      },
+                      {
+                        "color": "#C0392B",
+                        "value": "15 to 20 °C"
+                      },
+                      {
+                        "color": "#A93226",
+                        "value": "20 to 25 °C"
+                      }
+                    ],
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "observation_count"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "executive-summary",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "c3f9e9bd",
+                  "fields": [
+                    {
+                      "name": "executive_summary",
+                      "expression": "`executive_summary`"
+                    }
+                  ],
+                  "disaggregated": true,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`executive_summary`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Executive Briefing — NO2 Spot Price & Weather (Jan–Jun 2025)",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "executive_summary",
+                    "displayName": "Executive summary"
+                  }
+                ],
+                "rowOrder": [
+                  {
+                    "by": "column",
+                    "field": {
+                      "index": 0
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "observation_count_by_band",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e53b8d8e",
+                  "fields": [
+                    {
+                      "name": "temperature_band",
+                      "expression": "`temperature_band`"
+                    },
+                    {
+                      "name": "sum(observation_count)",
+                      "expression": "SUM(`observation_count`)"
+                    },
+                    {
+                      "name": "min(temperature_band_order)",
+                      "expression": "MIN(`temperature_band_order`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "MIN(`temperature_band_order`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Observation Hours by Temperature Band",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "mark": {
+                "colors": [
+                  "#9E9E9E"
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "temperature_band",
+                  "displayName": "Temperature Band",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "measure",
+                      "measure": {
+                        "fieldName": "min(temperature_band_order)"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(observation_count)",
+                  "displayName": "Observation Hours",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#E6E9EA",
+        "dark": "#1E2931"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#15181C"
+      },
+      "widgetBorderColor": {
+        "light": "#F3F5F6",
+        "dark": "#21292F"
+      },
+      "fontColor": {
+        "light": "#1A2127",
+        "dark": "#EEF0F2"
+      },
+      "selectionColor": {
+        "light": "#0E7AB9",
+        "dark": "#41ADEC"
+      },
+      "visualizationColors": [
+        "#A6CEE3",
+        "#1F78B4",
+        "#B2DF8A",
+        "#33A02C",
+        "#FB9A99",
+        "#E31A1C",
+        "#FDBF6F",
+        "#FF7F00",
+        "#CAB2D6",
+        "#6A3D9A",
+        "#FFFF99",
+        "#B15928"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "Inter",
+      "widgetPadding": 16,
+      "widgetMargin": 8,
+      "widgetCornerRadius": 16,
+      "widgetShadow": 50,
+      "continuousGradient": {
+        "lightMode": {
+          "fromCategoricalIndex": 0
+        },
+        "darkMode": {
+          "fromCategoricalIndex": 0
+        }
+      },
+      "fontSettings": {
+        "base": {
+          "fontFamily": "Inter",
+          "fontColor": {
+            "light": "#1A2127",
+            "dark": "#EEF0F2"
+          },
+          "fontSize": 14,
+          "fontWeight": 400
+        },
+        "widgetTitle": {
+          "fontSize": 16,
+          "fontWeight": 500
+        },
+        "widgetDescription": {
+          "fontSize": 14,
+          "fontWeight": 400
+        },
+        "fieldTitle": {
+          "textCase": "TEXT_CASE_UPPERCASE",
+          "fontColor": {
+            "light": "#31373D",
+            "dark": "#D6D8DA"
+          },
+          "fontSize": 13,
+          "fontWeight": 400
+        },
+        "fieldValue": {
+          "fontColor": {
+            "light": "#31373D",
+            "dark": "#D6D8DA"
+          },
+          "fontSize": 13,
+          "fontWeight": 400
+        }
+      },
+      "gridLineColor": {
+        "light": "#D6D7D8",
+        "dark": "#3C3E42"
+      },
+      "axisLineColor": {
+        "light": "#B0B4B6",
+        "dark": "#555E64"
+      }
+    },
+    "applyModeEnabled": false
+  }
+}
