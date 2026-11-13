@@ -44,6 +44,12 @@ resources:
           notebook_task:
             notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/07_gen_ai_summary
             source: WORKSPACE
+        - task_key: predictive_model
+          depends_on:
+            - task_key: validation
+          notebook_task:
+            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/08_predictive_model
+            source: WORKSPACE
       git_source:
         git_url: https://github.com/cachirico/weather-elprice.git
         git_provider: gitHub
