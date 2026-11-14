@@ -12,44 +12,44 @@ resources:
       tasks:
         - task_key: bronze_ingestion
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/02_bronze_ingestion
-            source: WORKSPACE
+            notebook_path: Notebooks/02_bronze_ingestion
+            source: GIT
         - task_key: silver_transformations
           depends_on:
             - task_key: bronze_ingestion
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/03_silver_transformations
-            source: WORKSPACE
+            notebook_path: Notebooks/03_silver_transformations
+            source: GIT
         - task_key: silver_join
           depends_on:
             - task_key: silver_transformations
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/04_silver_join
-            source: WORKSPACE
+            notebook_path: Notebooks/04_silver_join
+            source: GIT
         - task_key: gold_analysis
           depends_on:
             - task_key: silver_join
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/05_gold_analysis
-            source: WORKSPACE
+            notebook_path: Notebooks/05_gold_analysis
+            source: GIT
         - task_key: validation
           depends_on:
             - task_key: gold_analysis
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/06_validation
-            source: WORKSPACE
+            notebook_path: Notebooks/06_validation
+            source: GIT
         - task_key: gen_ai_summary
           depends_on:
             - task_key: validation
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/07_gen_ai_summary
-            source: WORKSPACE
+            notebook_path: Notebooks/07_gen_ai_summary
+            source: GIT
         - task_key: predictive_model
           depends_on:
             - task_key: validation
           notebook_task:
-            notebook_path: /Workspace/Users/chiricochiona@gmail.com/weather-elprice/Notebooks/08_predictive_model
-            source: WORKSPACE
+            notebook_path: Notebooks/08_predictive_model
+            source: GIT
       git_source:
         git_url: https://github.com/cachirico/weather-elprice.git
         git_provider: gitHub
