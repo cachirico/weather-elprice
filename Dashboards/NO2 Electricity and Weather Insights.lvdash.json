@@ -33,12 +33,53 @@
           }
         ]
       }
+    },
+    {
+      "name": "dd5d92e7",
+      "displayName": "model_feature_importance",
+      "config": {
+        "version": "1.1",
+        "source": "workspace.gold.model_feature_importance",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          },
+          {
+            "name": "feature_label",
+            "expr": "CASE source.feature\n  WHEN 'air_temperature_c' THEN 'Air Temperature'\n  WHEN 'wind_speed_mps' THEN 'Wind Speed'\n  WHEN 'hour' THEN 'Hour of Day'\n  WHEN 'month' THEN 'Month'\n  ELSE source.feature\nEND"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "model_metrics",
+      "displayName": "model_performance_metrics",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT 0.1972 AS mae, 0.3234 AS rmse\n",
+        "dimensions": [
+          {
+            "expr": "mae"
+          },
+          {
+            "expr": "rmse"
+          }
+        ]
+      }
     }
   ],
   "pages": [
     {
       "name": "ac24c0db",
-      "displayName": "Untitled page",
+      "displayName": "Overview",
       "layout": [
         {
           "widget": {
@@ -196,7 +237,7 @@
               "frame": {
                 "showTitle": true,
                 "title": {
-                  "value": "Executive Briefing — NO2 Spot Price & Weather (Jan–Jun 2025)",
+                  "value": "Executive Summary of NO2 Spot Price & Weather (Jan–Jun 2025)",
                   "fields": []
                 }
               },
@@ -237,36 +278,27 @@
               {
                 "name": "main_query",
                 "query": {
-                  "datasetName": "e53b8d8e",
+                  "datasetName": "dd5d92e7",
                   "fields": [
                     {
-                      "name": "temperature_band",
-                      "expression": "`temperature_band`"
+                      "name": "feature_label",
+                      "expression": "`feature_label`"
                     },
                     {
-                      "name": "sum(observation_count)",
-                      "expression": "SUM(`observation_count`)"
-                    },
-                    {
-                      "name": "min(temperature_band_order)",
-                      "expression": "MIN(`temperature_band_order`)"
+                      "name": "sum(importance)",
+                      "expression": "SUM(`importance`)"
                     }
                   ],
-                  "disaggregated": false,
-                  "orders": [
-                    {
-                      "direction": "ASC",
-                      "expression": "MIN(`temperature_band_order`)"
-                    }
-                  ]
+                  "disaggregated": false
                 }
               }
             ],
             "spec": {
               "frame": {
                 "showTitle": true,
+                "showDescription": false,
                 "title": {
-                  "value": "Observation Hours by Temperature Band",
+                  "value": "Price Drivers: What Impacts the NO2 Electricity Price Most?",
                   "fields": []
                 }
               },
@@ -279,21 +311,23 @@
               "widgetType": "bar",
               "encodings": {
                 "x": {
-                  "fieldName": "temperature_band",
-                  "displayName": "Temperature Band",
+                  "fieldName": "feature_label",
+                  "axis": {
+                    "hideTitle": true,
+                    "labelAngle": 45
+                  },
                   "scale": {
                     "type": "categorical",
                     "sort": {
-                      "by": "measure",
-                      "measure": {
-                        "fieldName": "min(temperature_band_order)"
-                      }
+                      "by": "y-reversed"
                     }
                   }
                 },
                 "y": {
-                  "fieldName": "sum(observation_count)",
-                  "displayName": "Observation Hours",
+                  "fieldName": "sum(importance)",
+                  "axis": {
+                    "title": "Importance"
+                  },
                   "scale": {
                     "type": "quantitative"
                   }
@@ -309,9 +343,117 @@
           },
           "position": {
             "x": 6,
-            "y": 5,
+            "y": 7,
             "width": 6,
-            "height": 7
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "model_mae",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "model_metrics",
+                  "fields": [
+                    {
+                      "name": "max(mae)",
+                      "expression": "MAX(`mae`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "<span style=\"text-align:center;display:block;\">Prediction MAE</span>",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(mae)",
+                  "rowNumber": 0,
+                  "format": {
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "places": 3,
+                      "type": "exact"
+                    },
+                    "type": "number-plain"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "model_rmse",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "model_metrics",
+                  "fields": [
+                    {
+                      "name": "max(rmse)",
+                      "expression": "MAX(`rmse`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "<span style=\"text-align:center;display:block;\">Prediction RMSE</span>",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(rmse)",
+                  "rowNumber": 0,
+                  "format": {
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "places": 3,
+                      "type": "exact"
+                    },
+                    "type": "number-plain"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 5,
+            "width": 3,
+            "height": 2
           }
         }
       ],
