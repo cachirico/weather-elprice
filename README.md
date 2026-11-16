@@ -30,9 +30,9 @@ The pipeline runs as a workflow (`pl_weather_price`) in Databricks, where the fi
 * **Silver (`silver.weather_hourly`, `silver.electricity_price_hourly`, `silver.weather_price_hourly`):**
   * **Purpose:** Cleaned, typed, and joined hourly data.
 * **Implementation:** `03_silver_transformations` selects the latest valid Bronze payload per request, unpacks the JSON structures into typed columns, pivots weather elements (selecting the best quality code if duplicates exist), and provides both UTC (`time_start_utc`) and local (`Europe/Oslo`) timestamps. `04_silver_join` performs a `LEFT JOIN` of hourly electricity prices against weather observations on `time_start_utc`, tagging each row's completeness in `weather_match_status` (`matched`, `partial`, or `missing`) without imputation, and merges the result into `silver.weather_price_hourly`.
-* **Gold (`gold.price_by_temp_band`, `gold.executive_summary`):**
-  * **Purpose:** Aggregated tables and summaries ready for analysis and reporting.
-  * **Implementation:** `05_gold_analysis` groups the hourly data into 5°C temperature intervals and calculates key statistics (average, median, standard deviation, min/max, and number of hours). `07_gen_ai_summary` adds an automated 3-bullet executive summary generated with Databricks Foundation Model APIs (`ai_query`).
+- **Gold (`gold.price_by_temperature_band`, `gold.executive_summary`, `gold.model_feature_importance`, `gold.model_performance_metrics`):**
+  * **Purpose:** Aggregated tables, AI summaries, and ML metrics ready for analysis and reporting.
+  * **Implementation:** `05_gold_analysis` groups the hourly data into 5°C temperature intervals and calculates key statistics (average, median, min/max, average wind speed, and observation count). `07_gen_ai_summary` adds an automated 3-bullet executive summary generated with Databricks Foundation Model APIs (`ai_query`), and `08_predictive_model` exports feature importances and evaluation metrics (`MAE`, `RMSE`, `R2`).
 * **Operations (`ops.data_quality_results`):**
   * **Purpose:** Logs the results of automated data quality checks across every layer for each `run_id`.
 
@@ -48,7 +48,7 @@ The pipeline runs as a workflow (`pl_weather_price`) in Databricks, where the fi
   * In Silver and Gold, tables are updated using Delta Lake `MERGE INTO` (upsert combined with a scoped delete for the selected `date_from`–`date_to` period). This makes it safe to re-run the pipeline for the same dates without creating duplicate rows.
 * **Error Handling:** API calls handle rate limits (`HTTP 429` with `Retry-After`) and temporary server errors (`HTTP 5xx`) by waiting and retrying automatically.
 * **Data Quality Checks (`ops.data_quality_results` and `06_validation`):** Each step checks the data (such as verifying that API requests succeeded, keys are unique, required columns have no nulls, and row counts match between Silver and Gold) and logs the results to `ops.data_quality_results`. If a critical check fails (`ERROR`), the pipeline stops immediately so bad data does not move forward.
-* **Workflows & Jobs-as-Code:** The entire Databricks job (`pl_weather_price`), including task dependencies, parameters (`date_from`, `date_to`, `run_id`), table triggers, and Git setup, is saved as YAML in `jobs/pl_weather_price.yml`.
+* **Workflows & Jobs-as-Code:** The entire Databricks job (`pl_weather_price`), including task dependencies, parameters (`date_from`, `date_to`, `run_id`), paused table triggers, and Git setup, is saved as YAML in `Jobs/pl_weather_price.yml`.
 
 ## 4. Analytics, Gen AI & Machine Learning
 
@@ -58,8 +58,8 @@ The pipeline runs as a workflow (`pl_weather_price`) in Databricks, where the fi
 * **Price Prediction Model (`08_predictive_model`):**
   * Trains a `RandomForestRegressor` (`scikit-learn`) on `silver.weather_price_hourly` to predict NO2 electricity prices based on temperature, wind speed, hour of the day, and month.
   * Uses **MLflow** to log model parameters (`n_estimators`, `max_depth`), error metrics (`MAE`, `RMSE`), feature importances, and the trained model itself.
-* **Interactive Lakeview Dashboard (`Executive Overview`):**
-  * Displays the Gen AI summary at the top, followed by charts showing average vs. median price per temperature band and the number of observed hours, with interactive date and area filters.
+* **Interactive Lakeview Dashboard (`NO2 Electricity and Weather Insights`):**
+  * Displays the automated Gen AI executive summary at the top, followed by the average price per temperature band chart, ML model evaluation metrics (`Prediction MAE` and `Prediction RMSE`), and the `Price Drivers` feature importance chart, providing a focused executive overview of the Stavanger NO2 market for H1 2025.
 
 ## 5. Repository Structure
 
@@ -69,7 +69,8 @@ The pipeline runs as a workflow (`pl_weather_price`) in Databricks, where the fi
 ├── Jobs/
 │   └── pl_weather_price.yml                              # Databricks Workflows YAML configuration
 ├── Notebooks/
-│   ├── 01_setup.ipynb               # Creates schemas (bronze, silver, gold, ops) and Delta tables
+│   ├── 00_setup.ipynb               # Creates schemas (bronze, silver, gold, ops) and Delta tables
+│   ├── 01_api_exploration.ipynb     # Initial exploration and testing of Frost & price APIs
 │   ├── 02_bronze_ingestion.ipynb    # Fetches raw API data into Bronze Delta tables
 │   ├── 03_silver_transformations.ipynb # Cleans, types, and formats hourly weather and price data
 │   ├── 04_silver_join.ipynb         # Joins hourly weather and electricity prices in Silver

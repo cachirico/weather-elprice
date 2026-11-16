@@ -60,17 +60,22 @@
       }
     },
     {
-      "name": "model_metrics",
+      "name": "d1e04224",
       "displayName": "model_performance_metrics",
       "config": {
         "version": "1.1",
-        "source": "SELECT 0.1972 AS mae, 0.3234 AS rmse\n",
+        "source": "workspace.gold.model_performance_metrics",
         "dimensions": [
           {
-            "expr": "mae"
-          },
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
           {
-            "expr": "rmse"
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
           }
         ]
       }
@@ -204,9 +209,9 @@
           },
           "position": {
             "x": 0,
-            "y": 5,
+            "y": 4,
             "width": 6,
-            "height": 7
+            "height": 8
           }
         },
         {
@@ -268,7 +273,7 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 5
+            "height": 4
           }
         },
         {
@@ -343,9 +348,9 @@
           },
           "position": {
             "x": 6,
-            "y": 7,
+            "y": 6,
             "width": 6,
-            "height": 5
+            "height": 6
           }
         },
         {
@@ -355,11 +360,11 @@
               {
                 "name": "main_query",
                 "query": {
-                  "datasetName": "model_metrics",
+                  "datasetName": "d1e04224",
                   "fields": [
                     {
-                      "name": "max(mae)",
-                      "expression": "MAX(`mae`)"
+                      "name": "sum(mae)",
+                      "expression": "SUM(`mae`)"
                     }
                   ],
                   "disaggregated": false
@@ -378,15 +383,14 @@
               "widgetType": "counter",
               "encodings": {
                 "value": {
-                  "fieldName": "max(mae)",
-                  "rowNumber": 0,
+                  "fieldName": "sum(mae)",
                   "format": {
-                    "abbreviation": "none",
+                    "type": "number-plain",
+                    "abbreviation": "compact",
                     "decimalPlaces": {
-                      "places": 3,
-                      "type": "exact"
-                    },
-                    "type": "number-plain"
+                      "type": "max",
+                      "places": 3
+                    }
                   }
                 }
               },
@@ -397,8 +401,8 @@
           },
           "position": {
             "x": 6,
-            "y": 5,
-            "width": 3,
+            "y": 4,
+            "width": 2,
             "height": 2
           }
         },
@@ -409,11 +413,11 @@
               {
                 "name": "main_query",
                 "query": {
-                  "datasetName": "model_metrics",
+                  "datasetName": "d1e04224",
                   "fields": [
                     {
-                      "name": "max(rmse)",
-                      "expression": "MAX(`rmse`)"
+                      "name": "sum(rmse)",
+                      "expression": "SUM(`rmse`)"
                     }
                   ],
                   "disaggregated": false
@@ -432,15 +436,14 @@
               "widgetType": "counter",
               "encodings": {
                 "value": {
-                  "fieldName": "max(rmse)",
-                  "rowNumber": 0,
+                  "fieldName": "sum(rmse)",
                   "format": {
-                    "abbreviation": "none",
+                    "type": "number-plain",
+                    "abbreviation": "compact",
                     "decimalPlaces": {
-                      "places": 3,
-                      "type": "exact"
-                    },
-                    "type": "number-plain"
+                      "type": "max",
+                      "places": 3
+                    }
                   }
                 }
               },
@@ -450,9 +453,62 @@
             }
           },
           "position": {
-            "x": 9,
-            "y": 5,
-            "width": 3,
+            "x": 8,
+            "y": 4,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "78673efc",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d1e04224",
+                  "fields": [
+                    {
+                      "name": "sum(r2)",
+                      "expression": "SUM(`r2`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "<span style=\"text-align:center;display:block\">Prediction R2</span>",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(r2)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 3
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 4,
+            "width": 2,
             "height": 2
           }
         }
