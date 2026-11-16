@@ -3,12 +3,10 @@ resources:
     pl_weather_price:
       name: pl_weather_price
       trigger:
-        pause_status: UNPAUSED
-        table_update:
-          table_names:
-            - workspace.bronze.electricity_price_api_raw
-            - workspace.bronze.weather_api_raw
-          condition: ANY_UPDATED
+        pause_status: PAUSED
+        periodic:
+          interval: 1
+          unit: DAYS
       tasks:
         - task_key: bronze_ingestion
           notebook_task:
